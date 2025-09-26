@@ -40,8 +40,12 @@ INSTALLED_APPS = [
     'rest_framework',
     'chats',
     
+
+    
 ]
 
+
+AUTH_USER_MODEL="chats.Users"
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -71,6 +75,11 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'messaging_app.wsgi.application'
 
+
+REST_FRAMEWORK={"DEFAULT_AUTHENTICATION_CLASSES":
+                ("rest_framework_simplejwt.authentication.JWTAuthentication")
+                
+                }
 
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
