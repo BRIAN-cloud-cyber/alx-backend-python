@@ -1,6 +1,7 @@
-from rest_framework import permissions
+from rest_framework.permissions import BasePermission
 
-class IsMessageOwner(permissions.BasePermission):
+
+class IsMessageOwner(BasePermission):
     """
     custom permission:only sender or receiver can view/edit a message 
     """
@@ -12,7 +13,7 @@ class IsMessageOwner(permissions.BasePermission):
 
     #conversation permission
 
-    class IsConversationParticipant(permissions.BasePermission):
+    class IsConversationParticipant(BasePermission):
         """
         custom permission:only participants can access the conversion.
         """
