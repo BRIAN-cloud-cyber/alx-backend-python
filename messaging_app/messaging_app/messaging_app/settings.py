@@ -39,13 +39,17 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'chats',
-    
-
-    
+    'messaging_app',
 ]
 
+REST_FRAMEWORK={ 
+    'DEFAULT_AUTHENTICATION_CLASS':(
 
-AUTH_USER_MODEL="chats.Users"
+        'rest_framework_simplejwt.authentication.JWT Authentication',
+    )
+}
+
+AUTH_USER_MODEL="chats.User"
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -75,11 +79,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'messaging_app.wsgi.application'
 
-
-REST_FRAMEWORK={"DEFAULT_AUTHENTICATION_CLASSES":
-                ("rest_framework_simplejwt.authentication.JWTAuthentication")
-                
-                }
 
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
@@ -132,3 +131,6 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+
