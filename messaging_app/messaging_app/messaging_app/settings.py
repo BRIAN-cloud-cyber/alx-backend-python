@@ -43,10 +43,13 @@ INSTALLED_APPS = [
 ]
 
 REST_FRAMEWORK={ 
-    'DEFAULT_AUTHENTICATION_CLASS':(
+    'DEFAULT_AUTHENTICATION_CLASS':( 
 
-        'rest_framework_simplejwt.authentication.JWT Authentication',
-    )
+        'rest_framework_simplejwt.authentication.JWT Authentication'),
+        'DEFAULT_PERMISSION_CLASSED':(
+            'rest_framework.permissions.Isauthenticated'
+        ),
+    
 }
 
 AUTH_USER_MODEL="chats.User"

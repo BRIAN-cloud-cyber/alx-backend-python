@@ -1,4 +1,4 @@
-from rest_framework.permissions import BasePermission,IsAuthenticated
+from rest_framework.permissions import BasePermission,SAFE_METHODS
 
 class IsParticipantOfConversation(BasePermission):
     """
@@ -16,6 +16,18 @@ class IsParticipantOfConversation(BasePermission):
 
             return request.user in obj.participants.all
         if hasattr(obj,"sender") and hasattr(obj,"receiver"):
-            return obj.sender ==request.user or obj.receiver ==request.user
+
+        # check if user belongs to this conversation 
+            in_conversation=request.user in [obj.sender,obj.receiver]
+             
+        if request.method in SAFE_METHODS:
+            #GET,HEAD,OPTIONS
+
+            return in_conversation
         
-        return False 
+        if request.method in ["PUT","PATCH","DELETE"]:
+            # only the sender can edir pr delete
+
+            return obj.sender ==request.user 
+        return in_conversation
+    
