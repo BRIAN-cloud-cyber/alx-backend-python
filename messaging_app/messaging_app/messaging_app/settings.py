@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'chats',
     'messaging_app',
+    'django_filters',
 ]
 
 REST_FRAMEWORK={ 
@@ -52,7 +53,8 @@ REST_FRAMEWORK={
         'DEFAULT_PAGINATION_CLASS':
         'chats.pagination.MessagePagination',
         'PAGE_SIZE':20,
-         
+         'DEFAULT_BACKEND_FILTERS':
+         'django_filters.rest_framework import DjangoFilterBackend',
 }
 
 AUTH_USER_MODEL="chats.User"
