@@ -1,7 +1,7 @@
 import logging
 from datetime import datetime,timedelta
 
-from django.Http import HttpResponseForbidden
+from django.http import HttpResponseForbidden
 
 class RequestLoggingMiddleware:
     def __init__(self,get_response):

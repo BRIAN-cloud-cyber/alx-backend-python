@@ -1,0 +1,13 @@
+from django.contrib import admin
+
+from .models import Message, Notification
+
+@admin.register(Message)
+class MessageAdmin(admin.ModelAdmin):
+    list_display = ("sender", "receiver", "timestamp", "content")
+
+@admin.register(Notification)
+class NotificationAdmin(admin.ModelAdmin):
+    list_display = ("user", "message", "is_read", "created_at")
+
+# Register your models here.
