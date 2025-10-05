@@ -4,11 +4,6 @@ from django.db.models.signals import pre_save
 from django.dispatch import receiver  # allows listening of instances
 from .managers import UnreadMessagesManager
 
-from django.shortcuts import render
-from django.views.decorators.cache import cache_page
-from django.contrib.auth.decorators import login_required
-
-
 class Message(models.Model):
     sender = models.ForeignKey(User, on_delete=models.CASCADE, related_name="sent_messages")
     receiver = models.ForeignKey(User, on_delete=models.CASCADE, related_name="received_messages")
@@ -96,18 +91,3 @@ def log_message_edit(sender,instance,**kwargs):
             instance.edited=True
 
 
-# ✅ Cache this view for 60 seconds
-@login_required
-@cache_page(60)  # <- required by checker: "cache_page" and "60"
-def conversation_view(request):
-    """
-    Display all messages for the logged-in user in a conversation.
-    Cached for 60 seconds to reduce database load.
-    """
-    messages = (
-        Message.objects.filter(receiver=request.user)
-        .select_related('sender', 'receiver', 'parent_message')
-        .prefetch_related('replies')
-        .order_by('timestamp')
-    )
-    return render(request, 'messaging/conversation.html', {'messages': messages})
