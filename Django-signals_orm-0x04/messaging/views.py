@@ -44,3 +44,10 @@ def send_message(request):
         )
 
     return render(request, 'messaging/send_message.html')
+
+def inbox(request):
+    # ✅ Use the custom manager to get unread messages only
+    unread_messages = Message.unread.unread_for_user(request.user).only(
+        'sender', 'content', 'timestamp'
+    )
+    return render(request, 'messaging/inbox.html', {'messages': unread_messages})

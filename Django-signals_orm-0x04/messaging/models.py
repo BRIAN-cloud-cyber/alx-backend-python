@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.db.models.signals import pre_save
 from django.dispatch import receiver  # allows listening of instances
+from .managers import UnreadMessagesManager
 
 class Message(models.Model):
     sender = models.ForeignKey(User, on_delete=models.CASCADE, related_name="sent_messages")
@@ -17,6 +18,14 @@ class Message(models.Model):
     parent_message = models.ForeignKey(
         'self', null=True, blank=True, on_delete=models.CASCADE, related_name='replies'
     )
+
+      # ✅ Read status for unread messages
+    read = models.BooleanField(default=False)
+
+    # ✅ Managers
+    objects = models.Manager()
+    unread = UnreadMessagesManager()  # custom unread messages manager
+
 
 
     def __str__(self):
@@ -49,6 +58,9 @@ class Message(models.Model):
 
         fetch_replies(self)
         return all_replies
+    
+
+
 
 
 
