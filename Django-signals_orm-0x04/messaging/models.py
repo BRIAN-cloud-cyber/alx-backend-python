@@ -13,8 +13,43 @@ class Message(models.Model):
     edited_at=models.DateTimeField(null=True,blank=True)
     edited_by=models.ForeignKey(User,null=True,blank=True,on_delete=models.SET_DEFAULT,related_name="edited_messages")
 
+     # 🔹 Add self-referential relationship for threaded replies
+    parent_message = models.ForeignKey(
+        'self', null=True, blank=True, on_delete=models.CASCADE, related_name='replies'
+    )
+
+
     def __str__(self):
         return f"From {self.sender} to {self.receiver} at {self.timestamp}"
+     # 🔹 ORM optimization using select_related and prefetch_related
+    @classmethod
+    def get_conversation_with_replies(cls, user):
+        """
+        Retrieve all messages and their replies efficiently.
+        """
+        return (
+            cls.objects.filter(receiver=user)
+            .select_related('sender', 'receiver', 'parent_message')  # Avoid N+1 for FKs
+            .prefetch_related('replies')  # Load all replies in one go
+            .order_by('timestamp')
+        )
+
+    # 🔹 Recursive method to fetch all replies to a given message
+    def get_all_replies(self):
+        """
+        Recursively fetch all nested replies (threaded format).
+        """
+        all_replies = []
+
+        def fetch_replies(message):
+            replies = message.replies.all().select_related('sender', 'receiver')
+            for reply in replies:
+                all_replies.append(reply)
+                fetch_replies(reply)
+
+        fetch_replies(self)
+        return all_replies
+
 
 
 class Notification(models.Model):
@@ -42,3 +77,5 @@ def log_message_edit(sender,instance,**kwargs):
         if old_message.content !=instance.object:
             MessageHistory.objects.create(Message=instance,old_content=old_message.content)
             instance.edited=True
+
+
