@@ -1,0 +1,17 @@
+#!/bin/bash
+# Apply rolling update
+kubectl apply -f blue_deployment.yaml
+
+# Monitor rollout
+kubectl rollout status deployment/django-blue
+
+# Test with curl
+while true; do
+  curl -s http://django-service:8000/ > /dev/null
+  echo "Request sent..."
+  sleep 1
+done
+
+# Verify pods
+kubectl get pods
+
