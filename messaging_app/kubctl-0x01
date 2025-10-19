@@ -1,0 +1,20 @@
+#!/bin/bash
+# File: kubctl-0x01
+# Objective: Scale the Django app to 3 replicas, test load, and monitor resource usage.
+
+echo "Scaling Django app to 3 replicas..."
+kubectl scale deployment django-messaging-deployment --replicas=3
+
+echo "Checking running pods..."
+kubectl get pods
+
+echo "Retrieving the service URL..."
+APP_URL=$(minikube service django-messaging-service --url)
+echo "Service available at: $APP_URL"
+
+echo "Performing load test using wrk..."
+wrk -t4 -c50 -d30s $APP_URL
+
+echo "Monitoring resource usage..."
+kubectl top pods
+
