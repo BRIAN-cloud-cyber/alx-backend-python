@@ -1,0 +1,67 @@
+Groovy
+pipeline {
+    agent any # Run the pipeline on any available agent
+    environment {
+        // Define environment variables
+        APP_NAME = 'messaging_app'
+        TEST_REPORTS_DIR = 'test_reports'
+    }
+stages {
+        stage('Checkout') {
+            steps {
+                // Checkout the code from the repository
+                echo 'Checking out the source code...'
+                checkout scm # download the source code from the configured SCM
+            }
+        }
+        stage('Install Dependencies') {
+            steps {
+                // Install Python dependencies
+                #setting up a virtual environment could be added here if needed
+                sh '''
+                    python3 -m venv venv
+                    source venv/bin/activate
+                     python3 -m pip install --upgrade pip
+                     pip install -r requirements.txt
+                '''
+                 
+            }
+        }
+        stage('Run Tests') {
+            steps {
+                // Run tests and generate reports
+                sh '''
+                    mkdir -p ${TEST_REPORTS_DIR}
+                    pytest --junitxml=${TEST_REPORTS_DIR}/results.xml
+                '''
+            }
+            post {
+                always {
+                    // Archive test reports
+                    junit "${TEST_REPORTS_DIR}/results.xml"
+                }
+            }
+        }
+        stage('Build') {
+            steps {
+                // Build the application (if applicable)
+                 echo "Building the application..."
+                 sh 'docker build -t ${APP_NAME}:latest .'
+            }
+        }
+        stage('Deploy') {
+            steps {
+                // Deploy the application (if applicable)
+                sh 'echo "Deploying the application..."'
+            }
+        }
+    }
+    post {
+        success {
+            echo 'Pipeline completed successfully!'
+        }
+        failure {
+            echo 'Pipeline failed. Please check the logs.'
+        }
+    }
+}
